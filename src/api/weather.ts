@@ -1,29 +1,29 @@
-import { API_CONFIG } from "./config";
+import { API_CONFIG } from "./config"
 import type {
   Coordinates,
   ForecastData,
   GeocodingResponse,
   WeatherData,
-} from "./types";
+} from "./types"
 
 class WeatherAPI {
   private createUrl(endpoint: string, params: Record<string, string | number>) {
     const searchParams = new URLSearchParams({
       appid: API_CONFIG.API_KEY,
       ...params,
-    });
+    })
 
-    return `${endpoint}?${searchParams.toString()};`;
+    return `${endpoint}?${searchParams.toString()}`
   }
 
   private async fetchData<T>(url: string): Promise<T> {
-    const response = await fetch(url);
+    const response = await fetch(url)
 
     if (!response.ok) {
-      throw new Error(`Weather API Error: ${response.statusText}`);
+      throw new Error(`Weather API Error: ${response.statusText}`)
     }
 
-    return response.json();
+    return response.json()
   }
 
   async getCurrentWeather({ lat, lon }: Coordinates): Promise<WeatherData> {
@@ -31,9 +31,9 @@ class WeatherAPI {
       lat: lat.toString(),
       lon: lon.toString(),
       units: API_CONFIG.DEFAULT_PARAMS.units,
-    });
+    })
 
-    return this.fetchData<WeatherData>(url);
+    return this.fetchData<WeatherData>(url)
   }
 
   async getForecast({ lat, lon }: Coordinates): Promise<ForecastData> {
@@ -41,9 +41,9 @@ class WeatherAPI {
       lat: lat.toString(),
       lon: lon.toString(),
       units: API_CONFIG.DEFAULT_PARAMS.units,
-    });
+    })
 
-    return this.fetchData<ForecastData>(url);
+    return this.fetchData<ForecastData>(url)
   }
 
   async reverseGeocode({
@@ -54,10 +54,10 @@ class WeatherAPI {
       lat: lat.toString(),
       lon: lon.toString(),
       limit: 1,
-    });
+    })
 
-    return this.fetchData<GeocodingResponse[]>(url);
+    return this.fetchData<GeocodingResponse[]>(url)
   }
 }
 
-export const weatherAPI = new WeatherAPI();
+export const weatherAPI = new WeatherAPI()
