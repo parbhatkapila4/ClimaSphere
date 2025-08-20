@@ -1,5 +1,6 @@
 import type { GeocodingResponse, WeatherData } from "@/api/types";
 import { Card, CardContent } from "./ui/card";
+import { ArrowDown } from "lucide-react";
 
 interface CurrentWeatherProps {
   data: WeatherData;
@@ -13,8 +14,7 @@ const CurrentWeather = ({ data, locationName }: CurrentWeatherProps) => {
     wind: { speed },
   } = data;
 
-
-  
+  const formatTemp = (temp: number) => `${Math.round(temp)}°`;
 
   return (
     <Card className="overflow-hidden">
@@ -37,7 +37,20 @@ const CurrentWeather = ({ data, locationName }: CurrentWeatherProps) => {
               </p>
             </div>
             <div className="flex items-center gap-2">
-                <p>{temp}</p>
+              <p className="text-7xl font-bold tracking-tighter">
+                {formatTemp(temp)}
+              </p>
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-muted-foreground">
+                  Feels like {formatTemp(feels_like)}
+                </p>
+                <div className="flex gap-2 text-sm font-medium">
+                  <span className="flex items-center gap-1 text-blue-500">
+                    <ArrowDown className="h-3 w-3" />
+                    {formatTemp(temp_min)}
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
