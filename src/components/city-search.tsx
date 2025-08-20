@@ -8,15 +8,27 @@ import {
   CommandItem,
   CommandList,
 } from "./ui/command";
-import { Search } from "lucide-react";
+import { Loader2, Search } from "lucide-react";
 import { useLocationSearch } from "@/hooks/use-weather";
 import { CommandSeparator } from "cmdk";
+import { useNavigate } from "react-router-dom";
 
 const CitySearch = () => {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const navigate = useNavigate();
 
   const { data: locations, isLoading } = useLocationSearch(query);
+
+  const handleSelect = (cityData: string) => {
+    const [lat, lon, name, country] = cityData.split("|");
+
+    //Add to search history
+
+    setOpen(false);
+
+        navigate(`/city/${name}? lat=${lat}&lon=${lon}`);
+  };
 
   return (
     <>
@@ -52,10 +64,35 @@ const CitySearch = () => {
 
           <CommandSeparator />
 
-            {locations && locations.length > 0 && (
-          <CommandGroup heading="Suggestions">
-            <CommandItem>Calendar</CommandItem>
-          </CommandGroup>
+          {locations && locations.length > 0 && (
+            <CommandGroup heading="Suggestions">
+              {isLoading && (
+                <div className="flex items-center justify-center p-4">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                </div>
+              )}
+
+              {locations.map((location) => {
+                return (
+                  <CommandItem
+                    key={`${location.lat}-${location.lon}`}
+                    value={`${location.lat} | ${location.lon} | ${location.name} | ${location.country}`}
+                    onSelect={handleSelect}
+                  >
+                    <Search className="mr-2 h-4 w-4" />
+                    <span>{location.name}</span>
+                    {location.state && (
+                      <span className="text-sm text-muted-foreground">
+                        , {location.state}
+                      </span>
+                    )}
+                    <span className="text-sm text-muted-foreground">
+                      , {location.country}
+                    </span>
+                  </CommandItem>
+                );
+              })}
+            </CommandGroup>
           )}
         </CommandList>
       </CommandDialog>
